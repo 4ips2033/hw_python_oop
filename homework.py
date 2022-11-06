@@ -1,7 +1,10 @@
+from typing import Optional, Sequence, Type
+
 
 class InfoMessage:
 
     """Информационное сообщение о тренировке."""
+
     def __init__(
         self,
         training_type: str,
@@ -19,14 +22,14 @@ class InfoMessage:
 
     def get_message(self) -> str:
         """Получение строки с показателями тренировки"""
-        indicators = (
+        indicators: str = (
             f'Тип тренировки: {self.training_type}; '
             f'Длительность: {self.duration:.3f} ч.; '
             f'Дистанция: {self.distance:.3f} км; '
             f'Ср. скорость: {self.speed:.3f} км/ч; '
             f'Потрачено ккал: {self.calories:.3f}.')
 
-        return (indicators)
+        return indicators
 
 
 class Training:
@@ -143,15 +146,18 @@ class Swimming(Training):
                 * self.weight * self.duration)
 
 
-def read_package(workout_type: str, data: list) -> Training:
+def read_package(workout_type: str,
+                 data: Sequence[float]) -> Optional[Training]:
     """Прочитать данные полученные от датчиков."""
-    training_type: dict = {
+    training_type: dict[str, Type[Training]] = {
         'RUN': Running,
         'SWM': Swimming,
         'WLK': SportsWalking
     }
     if workout_type in training_type:
         return training_type[workout_type](*data)
+    else:
+        raise ValueError('Неверный тип тренировки')
 
 
 def main(training: Training) -> None:
@@ -161,7 +167,7 @@ def main(training: Training) -> None:
 
 
 if __name__ == '__main__':
-    packages = [
+    packages: list[tuple[str, list[int]]] = [
         ('SWM', [720, 1, 80, 25, 40]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180]),
